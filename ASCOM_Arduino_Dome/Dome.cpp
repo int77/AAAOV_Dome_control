@@ -19,7 +19,8 @@ struct config_t {
 	long lastPosition;
 } config;
 
-long pulseCount[2];
+unsigned long pulseCount[2];
+unsigned long t[2];
 volatile long temp, move;
 static boolean rotating = false;
 boolean A_set = false;
@@ -179,6 +180,8 @@ void Dome::Calibrate()
 {
 	move = 256000;
 	int i = 0;
+	unsigned long t0;
+	unsigned long tend;
 
 	digitalWrite(GO_LEFT, HIGH);
 	digitalWrite(GO_RIGHT, LOW);
@@ -192,6 +195,7 @@ void Dome::Calibrate()
 			delay(50);
 			if (digitalRead(homeSensor) == LOW) {
 				pulseCount[i] = move;
+				t[i] = millis();
 				Serial.print("At HOME position:");
 				Serial.println(pulseCount[i]);
 				delay(1000);
@@ -209,6 +213,8 @@ void Dome::Calibrate()
 	if (i > 1) {
 		Serial.print("Number of pulses per Dome rotation: ");
 		Serial.println(config.stepsPerRotation);
+		Serial.print("Dome rotation period in seconds: ");
+		Serial.println((t[1]-t[0])/1000);
 	}
 }
 
@@ -257,6 +263,7 @@ void Dome::Calibrate1()
 			delay(50);
 			if (digitalRead(homeSensor) == LOW) {
 				pulseCount[i] = P_count;
+				t[i] = millis();
 				Serial.print("At HOME position:");
 				Serial.println(pulseCount[i]);
 				delay(1000);
@@ -272,6 +279,8 @@ void Dome::Calibrate1()
 		Serial.print("Number of pulses per Dome rotation: ");
 		Serial.println(pulseCount[1] - pulseCount[0]);
 		Serial.println(config.stepsPerRotation);
+		Serial.print("Dome rotation period in seconds: ");
+		Serial.println((t[1] - t[0]) / 1000);
 	}
 }
 

@@ -26,13 +26,13 @@ class Dome
     void Slew(long val);
     void AbortSlew();
     void SyncToAzimuth(long azimuth);
-	void FindHome();
+    void FindHome();
     void SetHomeAzimuth(long azimuth);
-	void SetParkPosition(long azimuth);
-	void Calibrate();
+    void SetParkPosition(long azimuth);
+    void Calibrate();
     void Calibrate1();
-	void SaveConfig();
-	void ReadConfig();
+    void SaveConfig();
+    void ReadConfig();
   private:
     void step(long val);
     long GetAzimuth();
