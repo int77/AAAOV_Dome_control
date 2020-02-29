@@ -180,8 +180,6 @@ void Dome::Calibrate()
 {
 	move = 256000;
 	int i = 0;
-	unsigned long t0;
-	unsigned long tend;
 
 	digitalWrite(GO_LEFT, HIGH);
 	digitalWrite(GO_RIGHT, LOW);
