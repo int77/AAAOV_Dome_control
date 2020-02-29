@@ -49,19 +49,19 @@ void Dome::interpretCommand(Messenger *message)
   char command = message->readChar(); // Read the command
   
   switch(command){
-    case 'P':
+	case 'P':
 		Park();
 		break;
-    case 'O':
+	case 'O':
 		OpenCloseShutter(message->readInt());
 		break;
-    case 'S':
+	case 'S':
 		Slew(message->readLong());
 		break;
-    case 'H':
+	case 'H':
 		AbortSlew();
 		break;
-    case 'T':
+	case 'T':
 		SyncToAzimuth(message->readInt());
 		break;
 	case 'F':
