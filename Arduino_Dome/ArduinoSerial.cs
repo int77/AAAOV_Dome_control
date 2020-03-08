@@ -33,6 +33,7 @@ namespace ASCOM.Arduino
             public static string SyncToAzimuth = "T";
             public static string FindHome = "F";
             public static string SetPark = "Z";
+            public static string SetHome = "A";
 
         }
 

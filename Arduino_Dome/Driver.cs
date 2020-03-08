@@ -65,6 +65,9 @@ namespace ASCOM.Arduino
         public Dome()
         {
             // TODO Implement your additional construction here
+
+            //SerialConnection.SendCommand(ArduinoSerial.SerialCommand.SetPark, Config.ParkAzimuth);
+            //SerialConnection.SendCommand(ArduinoSerial.SerialCommand.SetHome, Config.HomeAzimuth);
         }
 
         #region ASCOM Registration
@@ -223,7 +226,8 @@ namespace ASCOM.Arduino
             SerialConnection = new ArduinoSerial();
             SerialConnection.CommandQueueReady += new ArduinoSerial.CommandQueueReadyEventHandler(SerialConnection_CommandQueueReady);
             HC.WaitForMilliseconds(2000);
-
+            SerialConnection.SendCommand(ArduinoSerial.SerialCommand.SetPark, Config.ParkAzimuth);
+            SerialConnection.SendCommand(ArduinoSerial.SerialCommand.SetHome, Config.HomeAzimuth);
             return true;
         }
 
@@ -308,6 +312,7 @@ namespace ASCOM.Arduino
 
         public void Park()
         {
+            this.Config.IsSlewing = true;
             SerialConnection.SendCommand(ArduinoSerial.SerialCommand.Park);
 
             while (!this.Config.Parked)
@@ -316,7 +321,7 @@ namespace ASCOM.Arduino
 
         public void SetPark()
         {
-            this.Config.ParkPosition = this.Config.Azimuth;
+            this.Config.ParkAzimuth = this.Config.Azimuth;
             SerialConnection.SendCommand(ArduinoSerial.SerialCommand.SetPark, Azimuth);
         }
 

@@ -22,11 +22,11 @@ namespace ASCOM.Arduino
         private bool _Synced                = false;
 
         private double _Azimuth             = 0;
-        private double _ParkPosition        = 0;
-        //private double _HomePosition        = 0;
+        private double _ParkAzimuth         = 0;
+        private double _HomeAzimuth         = 0;
 
-        private string _ComPort             = "COM11";     // Com port
-        //private string _ComPort = null;     // Com port
+        //private string _ComPort             = "COM16";     // Com port
+        private string _ComPort = null;     // Com port
 
         private ShutterState _ShutterStatus = ShutterState.shutterClosed;
 
@@ -38,13 +38,19 @@ namespace ASCOM.Arduino
 
             try
             {
-                this._ParkPosition = this.GetDouble("ParkPosition");
+                this._ParkAzimuth = this.GetDouble("ParkAzimuth");
             }
             catch { }
 
             try
             {
                 this._ComPort = this.GetString("ComPort");
+            }
+            catch { }
+
+            try
+            {
+                this._HomeAzimuth = this.GetDouble("HomeAzimuth");
             }
             catch { }
 
@@ -151,13 +157,23 @@ namespace ASCOM.Arduino
             set { this._Azimuth = value; }
         }
 
-        public double ParkPosition
+        public double ParkAzimuth
         {
-            get { return this._ParkPosition; }
+            get { return this._ParkAzimuth; }
             set 
             {
-                this.WriteValue("ParkPosition", value);
-                this._ParkPosition = value; 
+                this.WriteValue("ParkAzimuth", value);
+                this._ParkAzimuth = value; 
+            }
+        }
+
+        public double HomeAzimuth
+        {
+            get { return this._HomeAzimuth; }
+            set
+            {
+                this.WriteValue("HomeAzimuth", value);
+                this._HomeAzimuth = value;
             }
         }
 

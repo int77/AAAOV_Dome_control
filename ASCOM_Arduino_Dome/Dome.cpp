@@ -71,7 +71,7 @@ void Dome::interpretCommand(Messenger *message)
 		SetHomeAzimuth(message->readInt());
 		break;
 	case 'Z':
-		SetParkPosition(message->readInt());
+		SetParkAzimuth(message->readInt());
 		break;
 	case 'C':
 		Calibrate();
@@ -303,7 +303,7 @@ void Dome::SetHomeAzimuth (long azimuth)
 	EEPROM.put(0, config);
 }
 
-void Dome::SetParkPosition(long azimuth)
+void Dome::SetParkAzimuth(long azimuth)
 {
 	config.parkAzimuth = azimuth;
 	//PrintAzimuth();

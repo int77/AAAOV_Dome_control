@@ -28,7 +28,7 @@ class Dome
     void SyncToAzimuth(long azimuth);
     void FindHome();
     void SetHomeAzimuth(long azimuth);
-    void SetParkPosition(long azimuth);
+    void SetParkAzimuth(long azimuth);
     void Calibrate();
     void Calibrate1();
     void SaveConfig();

@@ -19,13 +19,19 @@ namespace ASCOM.Arduino
             InitializeComponent();
 
             this.comboBoxComPort.Items.AddRange(new ASCOM.Utilities.Serial().AvailableCOMPorts);
-            this.comboBoxComPort.SelectedText = this.Config.ComPort;
+            this.comboBoxComPort.SelectedItem = this.Config.ComPort;
+            this.txtHomeAzimuth.Text = this.Config.HomeAzimuth.ToString();
+            this.txtParkAzimuth.Text = this.Config.ParkAzimuth.ToString();
         }
 
         private void cmdOK_Click(object sender, EventArgs e)
         {
             if (this.comboBoxComPort.SelectedItem != null)
+            {
                 this.Config.ComPort = this.comboBoxComPort.SelectedItem.ToString();
+                this.Config.HomeAzimuth = Convert.ToDouble(this.txtHomeAzimuth.Text);
+                this.Config.ParkAzimuth = Convert.ToDouble(this.txtParkAzimuth.Text);
+            }
             Dispose();
         }
 
@@ -52,6 +58,11 @@ namespace ASCOM.Arduino
         }
 
         private void SetupDialogForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
         {
 
         }
