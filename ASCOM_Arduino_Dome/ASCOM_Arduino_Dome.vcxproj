@@ -88,7 +88,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\ASCOM_Arduino_Dome;D:\AVR\arduino-1.8.10\hardware\arduino\avr\libraries\EEPROM\src;D:\AVR\arduino-1.8.10\hardware\arduino\avr\cores\arduino;D:\AVR\arduino-1.8.10\hardware\arduino\avr\variants\eightanaloginputs;D:\AVR\arduino-1.8.10\hardware\tools\avr\avr\include;D:\AVR\arduino-1.8.10\hardware\tools\avr\avr\include\avr;D:\AVR\arduino-1.8.10\hardware\tools\avr\lib\gcc\avr\4.9.2\include;D:\AVR\arduino-1.8.10\hardware\tools\avr\lib\gcc\avr\4.9.2\include;D:\AVR\arduino-1.8.10\hardware\tools\avr\lib\gcc\avr\4.9.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\ASCOM_Arduino_Dome;D:\AVR\arduino-1.8.10\hardware\arduino\avr\cores\arduino;D:\AVR\arduino-1.8.10\hardware\arduino\avr\variants\eightanaloginputs;D:\AVR\arduino-1.8.10\hardware\tools\avr\avr\include;D:\AVR\arduino-1.8.10\hardware\tools\avr\avr\include\avr;D:\AVR\arduino-1.8.10\hardware\tools\avr\lib\gcc\avr\4.9.2\include;D:\AVR\arduino-1.8.10\hardware\tools\avr\lib\gcc\avr\4.9.2\include;D:\AVR\arduino-1.8.10\hardware\tools\avr\lib\gcc\avr\4.9.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(ProjectDir)__vm\.ASCOM_Arduino_Dome.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <IgnoreStandardIncludePath>true</IgnoreStandardIncludePath>
       <PreprocessorDefinitions>__AVR_atmega328p__;__AVR_ATmega328P__;__AVR_ATmega328p__;F_CPU=16000000L;ARDUINO=108010;ARDUINO_AVR_NANO;ARDUINO_ARCH_AVR;__cplusplus=201103L;_VMICRO_INTELLISENSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -130,7 +130,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties config.Debug.customdebug_nano_atmega328old_debugger_type="none" arduino.upload.port="COM16" />
+      <UserProperties config.Debug.customdebug_nano_atmega328old_debugger_type="none" arduino.upload.port="COM23" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

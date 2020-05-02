@@ -99,7 +99,7 @@ namespace ASCOM.Arduino
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(178, 65);
             this.label2.TabIndex = 5;
-            this.label2.Text = "Home Azimuth";
+            this.label2.Text = "Home Azimuth [°]";
             this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // txtHomeAzimuth
@@ -116,7 +116,7 @@ namespace ASCOM.Arduino
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(178, 65);
             this.label3.TabIndex = 7;
-            this.label3.Text = "Park Azimuth";
+            this.label3.Text = "Park Azimuth [°]";
             // 
             // txtParkAzimuth
             // 
