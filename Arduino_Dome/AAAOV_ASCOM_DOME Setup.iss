@@ -38,11 +38,11 @@ Name: "{cf}\ASCOM\Uninstall\Dome\AAAOV_ASCOM_DOME"
 Name: source; Description: Install the Source files; Flags: unchecked
 
 [Files]
-Source: "C:\Users\M43314\Desktop\private\source\AAAOV_Dome_control\Arduino_Dome\bin\Release\Arduino Dome.dll"; DestDir: "{app}"
+Source: "C:\Users\Papa\source\repos\AAAOV_Dome_control\Arduino_Dome\bin\Release\Arduino Dome.dll"; DestDir: "{app}"
 ; Require a read-me HTML to appear after installation, maybe driver's Help doc
-Source: "C:\Users\M43314\Desktop\private\source\AAAOV_Dome_control\Arduino_Dome\ReadMe.txt"; DestDir: "{app}"; Flags: isreadme
+Source: "C:\Users\Papa\source\repos\AAAOV_Dome_control\Arduino_Dome\ReadMe.txt"; DestDir: "{app}"; Flags: isreadme
 ; Optional source files (COM and .NET aware)
-Source: "C:\Users\M43314\Desktop\private\source\AAAOV_Dome_control\Arduino_Dome\*"; Excludes: *.zip,*.exe,*.dll, \bin\*, \obj\*; DestDir: "{app}\Source\AAAOV_ASCOM_DOME Driver"; Tasks: source; Flags: recursesubdirs
+Source: "C:\Users\Papa\source\repos\AAAOV_Dome_control\Arduino_Dome\*"; Excludes: *.zip,*.exe,*.dll, \bin\*, \obj\*; DestDir: "{app}\Source\AAAOV_ASCOM_DOME Driver"; Tasks: source; Flags: recursesubdirs
 ; TODO: Add other files needed by your driver here (add subfolders above)
 
 
