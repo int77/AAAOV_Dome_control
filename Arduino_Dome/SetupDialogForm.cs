@@ -22,6 +22,7 @@ namespace ASCOM.Arduino
             this.comboBoxComPort.SelectedItem = this.Config.ComPort;
             this.txtHomeAzimuth.Text = this.Config.HomeAzimuth.ToString();
             this.txtParkAzimuth.Text = this.Config.ParkAzimuth.ToString();
+            this.ckbTraceEnable.Checked = this.Config.TraceEnabled;
         }
 
         private void cmdOK_Click(object sender, EventArgs e)
@@ -31,6 +32,7 @@ namespace ASCOM.Arduino
                 this.Config.ComPort = this.comboBoxComPort.SelectedItem.ToString();
                 this.Config.HomeAzimuth = Convert.ToDouble(this.txtHomeAzimuth.Text);
                 this.Config.ParkAzimuth = Convert.ToDouble(this.txtParkAzimuth.Text);
+                this.Config.TraceEnabled = this.ckbTraceEnable.Checked;
             }
             Dispose();
         }
@@ -62,9 +64,5 @@ namespace ASCOM.Arduino
 
         }
 
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

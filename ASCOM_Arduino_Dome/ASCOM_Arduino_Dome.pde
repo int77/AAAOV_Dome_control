@@ -8,8 +8,8 @@ bool listening = 1;
 bool manual_turn_east = 0;
 bool manual_turn_west = 0;
 
-unsigned long current_millis, previous_millis_pa;
-unsigned long azimuth_update_period = 100; //ms
+//unsigned long current_millis, previous_millis_pa;
+//unsigned long azimuth_update_period = 100; //ms
 long current_azimuth, previous_azimuth;
 
 void messageCompleted() {
@@ -48,7 +48,16 @@ void loop(){
     manual_turn_east = !digitalRead(manual_east);
     manual_turn_west = !digitalRead(manual_west);
 
-    if (manual_turn_east || manual_turn_west) listening = 0;
+    if (manual_turn_east || manual_turn_west) {
+        delayMicroseconds(1000);
+        manual_turn_east = !digitalRead(manual_east);
+        manual_turn_west = !digitalRead(manual_west);
+        if (manual_turn_east || manual_turn_west) {
+            if (listening) Serial.println("SLEWING");
+            listening = 0;
+        }
+    }
+        
 /*
     current_millis = millis();
     if ((current_millis - previous_millis_pa) >= azimuth_update_period) 
@@ -77,9 +86,14 @@ void loop(){
         };
 
         if(!manual_turn_east & !manual_turn_west) {
-            listening = 1;
-            dome.AbortSlew();
-            dome.PrintAzimuth();
+            delayMicroseconds(1000);
+            manual_turn_east = !digitalRead(manual_east);
+            manual_turn_west = !digitalRead(manual_west);
+            if (!manual_turn_east & !manual_turn_west) {
+                listening = 1;
+                dome.AbortSlew();
+                dome.PrintAzimuth();
+            }
         };
     }
 

@@ -37,6 +37,7 @@ namespace ASCOM.Arduino
             this.txtHomeAzimuth = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.txtParkAzimuth = new System.Windows.Forms.TextBox();
+            this.ckbTraceEnable = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.picASCOM)).BeginInit();
             this.SuspendLayout();
             // 
@@ -54,7 +55,7 @@ namespace ASCOM.Arduino
             // cmdCancel
             // 
             this.cmdCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cmdCancel.Location = new System.Drawing.Point(243, 246);
+            this.cmdCancel.Location = new System.Drawing.Point(243, 264);
             this.cmdCancel.Name = "cmdCancel";
             this.cmdCancel.Size = new System.Drawing.Size(59, 25);
             this.cmdCancel.TabIndex = 1;
@@ -95,16 +96,15 @@ namespace ASCOM.Arduino
             // label2
             // 
             this.label2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label2.Location = new System.Drawing.Point(12, 88);
+            this.label2.Location = new System.Drawing.Point(12, 91);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(178, 65);
             this.label2.TabIndex = 5;
             this.label2.Text = "Home Azimuth [°]";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // txtHomeAzimuth
             // 
-            this.txtHomeAzimuth.Location = new System.Drawing.Point(34, 109);
+            this.txtHomeAzimuth.Location = new System.Drawing.Point(34, 120);
             this.txtHomeAzimuth.Name = "txtHomeAzimuth";
             this.txtHomeAzimuth.Size = new System.Drawing.Size(121, 20);
             this.txtHomeAzimuth.TabIndex = 6;
@@ -125,11 +125,22 @@ namespace ASCOM.Arduino
             this.txtParkAzimuth.Size = new System.Drawing.Size(121, 20);
             this.txtParkAzimuth.TabIndex = 8;
             // 
+            // ckbTraceEnable
+            // 
+            this.ckbTraceEnable.AutoSize = true;
+            this.ckbTraceEnable.Location = new System.Drawing.Point(34, 264);
+            this.ckbTraceEnable.Name = "ckbTraceEnable";
+            this.ckbTraceEnable.Size = new System.Drawing.Size(111, 17);
+            this.ckbTraceEnable.TabIndex = 10;
+            this.ckbTraceEnable.Text = "Enable Trace Log";
+            this.ckbTraceEnable.UseVisualStyleBackColor = true;
+            // 
             // SetupDialogForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(320, 292);
+            this.ClientSize = new System.Drawing.Size(322, 305);
+            this.Controls.Add(this.ckbTraceEnable);
             this.Controls.Add(this.txtParkAzimuth);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txtHomeAzimuth);
@@ -166,5 +177,6 @@ namespace ASCOM.Arduino
         private System.Windows.Forms.TextBox txtHomeAzimuth;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtParkAzimuth;
+        private System.Windows.Forms.CheckBox ckbTraceEnable;
     }
 }

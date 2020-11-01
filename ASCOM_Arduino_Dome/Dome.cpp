@@ -119,7 +119,6 @@ void Dome::step(long val)
   
   while(move > 0)
   {
-	//rotating = true;
 
 	if(Serial.available() > 0) break;
 
@@ -340,6 +339,7 @@ void update_position() {
 		position--;
 		move--;
 		return;
+// if more than two steps allowed
 /*	case 3: case 12:
 		position++;
 		position++;

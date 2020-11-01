@@ -55,19 +55,24 @@ namespace ASCOM.Arduino
 
         private ArduinoSerial SerialConnection;
 
-        private Util HC = new Util();
+        private Util HC;
 
-        private Config Config = new Config();
+        private Config Config;
+
+        private TraceLogger dl;
 
         //
         // Constructor - Must be public for COM registration!
         //
         public Dome()
         {
-            // TODO Implement your additional construction here
+            Config = new Config();
 
-            //SerialConnection.SendCommand(ArduinoSerial.SerialCommand.SetPark, Config.ParkAzimuth);
-            //SerialConnection.SendCommand(ArduinoSerial.SerialCommand.SetHome, Config.HomeAzimuth);
+            dl = new TraceLogger("", "Arduino_Dome");
+            dl.Enabled = Config.TraceEnabled;
+            dl.LogMessage("Arduino_Dome", "Starting initialisation");
+            HC = new Util();
+            dl.LogMessage("Arduino_Dome", "Completed initialisation");
         }
 
         #region ASCOM Registration
@@ -112,7 +117,9 @@ namespace ASCOM.Arduino
 
         public void AbortSlew()
         {
+            CheckConnected("AbortSlew");
             SerialConnection.SendCommand(ArduinoSerial.SerialCommand.Abort);
+            dl.LogMessage("Arduino_Dome", "Aborting slew");
         }
 
         public double Altitude
@@ -197,6 +204,22 @@ namespace ASCOM.Arduino
             throw new MethodNotImplementedException("CommandString");
         }
 
+        public void Dispose()
+        {
+            // Clean up the tracelogger and util objects
+            dl.LogMessage("Arduino_Dome", "Disposing");
+            dl.Enabled = false;
+            dl.Dispose();
+            dl = null;
+            HC.Dispose();
+            HC = null;
+            if (SerialConnection.IsOpen)
+            {
+                SerialConnection.Close();
+            }
+        }
+
+
         public bool Connected
         {
             get { return this.Config.Link; }
@@ -224,12 +247,13 @@ namespace ASCOM.Arduino
                 SerialConnection.SendCommand(ArduinoSerial.SerialCommand.SetPark, Config.ParkAzimuth);
                 SerialConnection.SendCommand(ArduinoSerial.SerialCommand.SetHome, Config.HomeAzimuth);
                 CheckConnected("ConnectDome");
+                dl.LogMessage("Arduino_Dome", "Dome connected");
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
-                //dl.LogMessage("Connected Set", $"Port {SerialConnection.PortName} cannot be opened ({e.Message})");
+                dl.LogMessage("Arduino_Dome", $"Port {SerialConnection.PortName} cannot be opened ({e.Message})");
                 throw new NotConnectedException("Can't connect to the device");
                 //return false;
             }
@@ -241,6 +265,7 @@ namespace ASCOM.Arduino
             {
                 SerialConnection.Close();
             }
+            dl.LogMessage("Arduino_Dome", "Dome disconnected");
             return true;
         }
 
@@ -249,10 +274,11 @@ namespace ASCOM.Arduino
 
             this.Config.Link = false;
             SerialConnection.SendCommand(ArduinoSerial.SerialCommand.ReadStatus);
-            HC.WaitForMilliseconds(200);
+            HC.WaitForMilliseconds(100);
 
             if (!this.Config.Link)
             {
+                dl.LogMessage("Arduino_Dome", $"Connection lost in ({message})");
                 throw new ASCOM.NotConnectedException(message);
             }
         }
@@ -307,20 +333,14 @@ namespace ASCOM.Arduino
 
         public string DriverInfo
         {
-            get { return "1.0"; }
+            get { return "1.1"; }
         }
 
         public void FindHome()
         {
-            //this.Config.IsSlewing = true;
-
             CheckConnected("FindHome");
             SerialConnection.SendCommand(ArduinoSerial.SerialCommand.FindHome);
-//            HC.WaitForMilliseconds(500);
-
-//            while (this.Config.IsSlewing)
-//                HC.WaitForMilliseconds(100);
-            //throw new MethodNotImplementedException("FindHome");
+            dl.LogMessage("Arduino_Dome", "Finding Home");
         }
 
         public short InterfaceVersion
@@ -336,40 +356,29 @@ namespace ASCOM.Arduino
         public void OpenShutter()
         {
             CheckConnected("OpenShutter");
-            //this.Config.ShutterStatus = ShutterState.shutterOpening;
             SerialConnection.SendCommand(ArduinoSerial.SerialCommand.OpenCloseShutter,1);
-            //HC.WaitForMilliseconds(500);
-
-            //while (this.Config.ShutterStatus == ShutterState.shutterOpening)
-                //HC.WaitForMilliseconds(100);
+            dl.LogMessage("Arduino_Dome", "Opening Shutter");
         }
 
         public void CloseShutter()
         {
             CheckConnected("CloseShutter");
-            //this.Config.ShutterStatus = ShutterState.shutterClosing;
             SerialConnection.SendCommand(ArduinoSerial.SerialCommand.OpenCloseShutter,0);
-            //HC.WaitForMilliseconds(500);
-
-            //while (this.Config.ShutterStatus == ShutterState.shutterClosing)
-                //HC.WaitForMilliseconds(100);
+            dl.LogMessage("Arduino_Dome", "Closing Shutter");
         }
 
         public void Park()
         {
-            //this.Config.IsSlewing = true;
             CheckConnected("Park");
             SerialConnection.SendCommand(ArduinoSerial.SerialCommand.Park);
-            //HC.WaitForMilliseconds(500);
-
-            //while (!this.Config.Parked)
-            //    HC.WaitForMilliseconds(100);
+            dl.LogMessage("Arduino_Dome", "Parking dome");
         }
 
         public void SetPark()
         {
             this.Config.ParkAzimuth = this.Config.Azimuth;
             SerialConnection.SendCommand(ArduinoSerial.SerialCommand.SetPark, Azimuth);
+            dl.LogMessage("Arduino_Dome", "Setting Park");
         }
 
         public void SetupDialog()
@@ -400,10 +409,7 @@ namespace ASCOM.Arduino
                 throw new Exception("Out of range");
             CheckConnected("SlewToAzimuth");
             SerialConnection.SendCommand(ArduinoSerial.SerialCommand.Slew, Azimuth);
-//            HC.WaitForMilliseconds(500);
-
-//            while (this.Config.IsSlewing)
-//                HC.WaitForMilliseconds(100);
+            dl.LogMessage("Arduino_Dome", $"Slewing to azimuth ({Azimuth})");
         }
 
         public bool Slewing
@@ -417,9 +423,7 @@ namespace ASCOM.Arduino
             if (Azimuth > 360 || Azimuth < 0)
                 throw new Exception("Out of range");
             SerialConnection.SendCommand(ArduinoSerial.SerialCommand.SyncToAzimuth, Azimuth);
-
- //           while (!this.Config.Synced)
- //               HC.WaitForMilliseconds(100);
+            dl.LogMessage("Arduino_Dome", $"Syncing to azimuth ({Azimuth})");
         }
 
         #endregion

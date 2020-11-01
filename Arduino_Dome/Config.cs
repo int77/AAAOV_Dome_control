@@ -20,6 +20,7 @@ namespace ASCOM.Arduino
         private bool _Parked                = false;
         private bool _Slaved                = false;
         private bool _Synced                = false;
+        private bool _TraceEnabled          = true;
 
         private double _Azimuth             = 0;
         private double _ParkAzimuth         = 0;
@@ -39,20 +40,14 @@ namespace ASCOM.Arduino
             try
             {
                 this._ParkAzimuth = this.GetDouble("ParkAzimuth");
-            }
-            catch { }
-
-            try
-            {
                 this._ComPort = this.GetString("ComPort");
-            }
-            catch { }
-
-            try
-            {
                 this._HomeAzimuth = this.GetDouble("HomeAzimuth");
+                this._TraceEnabled = this.GetBool("TraceEnabled");
             }
-            catch { }
+            catch
+            {
+                
+            }
 
         }
                      
@@ -149,6 +144,16 @@ namespace ASCOM.Arduino
         {
             get { return this._Synced; }
             set { this._Synced = value; }
+        }
+
+        public bool TraceEnabled
+        {
+            get { return this._TraceEnabled; }
+            set 
+            {
+                this.WriteValue("TraceEnabled", value);
+                this._TraceEnabled = value; 
+            }
         }
 
         public double Azimuth
