@@ -177,14 +177,7 @@ namespace ASCOM.Arduino
             get { return true; }
         }
 
-        public void CloseShutter()
-        {
-            this.Config.ShutterStatus = ShutterState.shutterClosing;
-            SerialConnection.SendCommand(ArduinoSerial.SerialCommand.CloseShutter);
 
-            while (this.Config.ShutterStatus == ShutterState.shutterClosed)
-                HC.WaitForMilliseconds(100);
-        }
 
         public void CommandBlind(string Command)
         {
@@ -223,12 +216,45 @@ namespace ASCOM.Arduino
 
         private bool ConnectDome()
         {
-            SerialConnection = new ArduinoSerial();
-            SerialConnection.CommandQueueReady += new ArduinoSerial.CommandQueueReadyEventHandler(SerialConnection_CommandQueueReady);
-            HC.WaitForMilliseconds(2000);
-            SerialConnection.SendCommand(ArduinoSerial.SerialCommand.SetPark, Config.ParkAzimuth);
-            SerialConnection.SendCommand(ArduinoSerial.SerialCommand.SetHome, Config.HomeAzimuth);
+            try
+            {
+                SerialConnection = new ArduinoSerial();
+                SerialConnection.CommandQueueReady += new ArduinoSerial.CommandQueueReadyEventHandler(SerialConnection_CommandQueueReady);
+                HC.WaitForMilliseconds(2000);
+                SerialConnection.SendCommand(ArduinoSerial.SerialCommand.SetPark, Config.ParkAzimuth);
+                SerialConnection.SendCommand(ArduinoSerial.SerialCommand.SetHome, Config.HomeAzimuth);
+                CheckConnected("ConnectDome");
+                return true;
+            }
+            catch (Exception)
+            {
+
+                //dl.LogMessage("Connected Set", $"Port {SerialConnection.PortName} cannot be opened ({e.Message})");
+                throw new NotConnectedException("Can't connect to the device");
+                //return false;
+            }
+        }
+
+        private bool DisconnectDome()
+        {
+            if (SerialConnection.IsOpen) 
+            {
+                SerialConnection.Close();
+            }
             return true;
+        }
+
+        private void CheckConnected(string message)
+        {
+
+            this.Config.Link = false;
+            SerialConnection.SendCommand(ArduinoSerial.SerialCommand.ReadStatus);
+            HC.WaitForMilliseconds(200);
+
+            if (!this.Config.Link)
+            {
+                throw new ASCOM.NotConnectedException(message);
+            }
         }
 
         void SerialConnection_CommandQueueReady(object sender, EventArgs e)
@@ -244,10 +270,12 @@ namespace ASCOM.Arduino
                     case "P":
                         this.Config.Azimuth = Int32.Parse(com_args[1]);
                         this.Config.IsSlewing = false;
-                        this.Config.AtHome = false;
                         break;
                     case "SHUTTER":
-                        this.Config.ShutterStatus = (com_args[1] == "OPEN") ? ShutterState.shutterOpen : ShutterState.shutterClosed;
+                        if (com_args[1] == "OPEN") this.Config.ShutterStatus = ShutterState.shutterOpen;
+                        if (com_args[1] == "CLOSED") this.Config.ShutterStatus = ShutterState.shutterClosed;
+                        if (com_args[1] == "OPENING") this.Config.ShutterStatus = ShutterState.shutterOpening;
+                        if (com_args[1] == "CLOSING") this.Config.ShutterStatus = ShutterState.shutterClosing;
                         break;
                     case "SYNCED":
                         this.Config.Synced = true;
@@ -258,36 +286,40 @@ namespace ASCOM.Arduino
                     case "ATHOME":
                         this.Config.AtHome = true;
                         break;
+                    case "CONNECTED":
+                        this.Config.Link = true;
+                        break;
+                    case "SLEWING":
+                        this.Config.IsSlewing = true;
+                        this.Config.AtHome = false;
+                        this.Config.Parked = false;
+                        break;
                     default:
                         break;
                 }
             }
         }
 
-        private bool DisconnectDome()
-        {
-            SerialConnection.Close();
-
-            return true;
-        }
-
         public string Description
         {
-            get { return ""; }
+            get { return "Arduino Dome"; }
         }
 
         public string DriverInfo
         {
-            get { return ""; }
+            get { return "1.0"; }
         }
 
         public void FindHome()
         {
-            this.Config.IsSlewing = true;
-            SerialConnection.SendCommand(ArduinoSerial.SerialCommand.FindHome);
+            //this.Config.IsSlewing = true;
 
-            while (this.Config.IsSlewing)
-                HC.WaitForMilliseconds(100);
+            CheckConnected("FindHome");
+            SerialConnection.SendCommand(ArduinoSerial.SerialCommand.FindHome);
+//            HC.WaitForMilliseconds(500);
+
+//            while (this.Config.IsSlewing)
+//                HC.WaitForMilliseconds(100);
             //throw new MethodNotImplementedException("FindHome");
         }
 
@@ -303,20 +335,35 @@ namespace ASCOM.Arduino
 
         public void OpenShutter()
         {
-            this.Config.ShutterStatus = ShutterState.shutterOpening;
-            SerialConnection.SendCommand(ArduinoSerial.SerialCommand.OpenShutter);
+            CheckConnected("OpenShutter");
+            //this.Config.ShutterStatus = ShutterState.shutterOpening;
+            SerialConnection.SendCommand(ArduinoSerial.SerialCommand.OpenCloseShutter,1);
+            //HC.WaitForMilliseconds(500);
 
-            while (this.Config.ShutterStatus == ShutterState.shutterOpening)
-                HC.WaitForMilliseconds(100);
+            //while (this.Config.ShutterStatus == ShutterState.shutterOpening)
+                //HC.WaitForMilliseconds(100);
+        }
+
+        public void CloseShutter()
+        {
+            CheckConnected("CloseShutter");
+            //this.Config.ShutterStatus = ShutterState.shutterClosing;
+            SerialConnection.SendCommand(ArduinoSerial.SerialCommand.OpenCloseShutter,0);
+            //HC.WaitForMilliseconds(500);
+
+            //while (this.Config.ShutterStatus == ShutterState.shutterClosing)
+                //HC.WaitForMilliseconds(100);
         }
 
         public void Park()
         {
-            this.Config.IsSlewing = true;
+            //this.Config.IsSlewing = true;
+            CheckConnected("Park");
             SerialConnection.SendCommand(ArduinoSerial.SerialCommand.Park);
+            //HC.WaitForMilliseconds(500);
 
-            while (!this.Config.Parked)
-                HC.WaitForMilliseconds(100);
+            //while (!this.Config.Parked)
+            //    HC.WaitForMilliseconds(100);
         }
 
         public void SetPark()
@@ -351,12 +398,12 @@ namespace ASCOM.Arduino
         {
             if (Azimuth > 360 || Azimuth < 0)
                 throw new Exception("Out of range");
-            this.Config.IsSlewing = true;
-            //this.Config.AtHome = false;
+            CheckConnected("SlewToAzimuth");
             SerialConnection.SendCommand(ArduinoSerial.SerialCommand.Slew, Azimuth);
+//            HC.WaitForMilliseconds(500);
 
-            while (this.Config.IsSlewing)
-                HC.WaitForMilliseconds(100);
+//            while (this.Config.IsSlewing)
+//                HC.WaitForMilliseconds(100);
         }
 
         public bool Slewing
@@ -371,8 +418,8 @@ namespace ASCOM.Arduino
                 throw new Exception("Out of range");
             SerialConnection.SendCommand(ArduinoSerial.SerialCommand.SyncToAzimuth, Azimuth);
 
-            while (!this.Config.Synced)
-                HC.WaitForMilliseconds(100);
+ //           while (!this.Config.Synced)
+ //               HC.WaitForMilliseconds(100);
         }
 
         #endregion

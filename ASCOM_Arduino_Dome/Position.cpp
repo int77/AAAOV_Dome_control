@@ -4,6 +4,7 @@ extern "C" {
 
 #include "Arduino.h"
 #include "Position.h"
+#include "Dome.h"
 
 Position::Position(long range)
 {
@@ -17,14 +18,14 @@ long Position::Quickest(long azimuth)
   long cross_clockwise = (this->stepperPosition + this->range) - this->DegreesToPos(azimuth);
   long cross_counterclockwise = (this->DegreesToPos(azimuth) + this->range) - this->stepperPosition;
 
-  if(abs(bounded) < abs(cross_clockwise) && abs(bounded) < abs(cross_counterclockwise))
+  if(abs_macro(bounded) < abs_macro(cross_clockwise) && abs_macro(bounded) < abs_macro(cross_counterclockwise))
     return bounded;
-  else if(abs(cross_clockwise) < abs(bounded) && abs(cross_clockwise) < abs(cross_counterclockwise))
+  else if(abs_macro(cross_clockwise) < abs_macro(bounded) && abs_macro(cross_clockwise) < abs_macro(cross_counterclockwise))
     return cross_clockwise * -1;
-  else if(abs(cross_counterclockwise) < abs(bounded) && abs(cross_counterclockwise) < abs(cross_clockwise))
+  else if(abs_macro(cross_counterclockwise) < abs_macro(bounded) && abs_macro(cross_counterclockwise) < abs_macro(cross_clockwise))
     return cross_counterclockwise;
   
-  return bounded;
+  //return bounded;
 }
 
 void Position::Sync(long azimuth)
@@ -49,7 +50,7 @@ long Position::PosToDegrees(long pos)
 
 long Position::DegreesToPos(int degrees)
 {
-  return map(degrees, 0, 360, 0, this->range) + 1;
+  return map(degrees, 0, 360, 0, this->range);
 }
 
 Position Position::operator++(int)

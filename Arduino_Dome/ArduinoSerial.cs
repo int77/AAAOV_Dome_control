@@ -28,12 +28,12 @@ namespace ASCOM.Arduino
             public static string Slew = "S";
             public static string Abort = "H";
             public static string Park = "P";
-            public static string OpenShutter = "O" + Syntax.Spacer + "1";
-            public static string CloseShutter = "O" + Syntax.Spacer + "0";
+            public static string OpenCloseShutter = "O";
             public static string SyncToAzimuth = "T";
             public static string FindHome = "F";
             public static string SetPark = "Z";
             public static string SetHome = "A";
+            public static string ReadStatus = "G";
 
         }
 
@@ -92,7 +92,7 @@ namespace ASCOM.Arduino
             this.Close();
             HC.WaitForMilliseconds(1000);
             this.Open();
-            HC.WaitForMilliseconds(3000);
+            HC.WaitForMilliseconds(1000);
         }
     }
 }

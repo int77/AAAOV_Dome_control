@@ -17,6 +17,8 @@
 #define manual_east 7
 #define FULLROTATION 1000
 
+#define abs_macro(x) ((x)>0?(x):-(x))
+
 class Dome
 {
   public:
@@ -25,6 +27,7 @@ class Dome
     void Park();
     void OpenCloseShutter(int open);
     void Slew(long val);
+    void GetStatus();
     void Go_West();
     void Go_East();
     void AbortSlew();
@@ -43,9 +46,6 @@ class Dome
     //long GetPosition(long azimuth);
     void PrintStepperPosition();
 };
-
-//extern void update_positionA();
-//extern void update_positionB();
 
 extern void update_position();
 

@@ -12,12 +12,17 @@ unsigned long current_millis, previous_millis_pa;
 unsigned long azimuth_update_period = 100; //ms
 long current_azimuth, previous_azimuth;
 
+void messageCompleted() {
+    dome.interpretCommand(&message);
+}
+
 void setup(){
   Serial.begin(9600);
   Serial.flush();
+  delay(500);
 
   Serial.println("R ASCOM.Arduino.Dome");
-  
+    
   message.attach(messageCompleted);
 
   pinMode(LED_BUILTIN, OUTPUT);
@@ -32,17 +37,10 @@ void setup(){
   pinMode(manual_west, INPUT_PULLUP);
   pinMode(manual_east, INPUT_PULLUP);
 
-  //attachInterrupt(digitalPinToInterrupt(encoderA), update_positionA, RISING); // pin 2
-  //attachInterrupt(digitalPinToInterrupt(encoderB), update_positionB, RISING); // pin 3
-
   attachInterrupt(digitalPinToInterrupt(encoderA), update_position, CHANGE); // pin 2
   attachInterrupt(digitalPinToInterrupt(encoderB), update_position, CHANGE); // pin 3
 
   //wdt_enable(WDTO_2S); //watchdog
-}
-
-void messageCompleted(){
-  dome.interpretCommand(&message);
 }
 
 void loop(){
@@ -51,7 +49,7 @@ void loop(){
     manual_turn_west = !digitalRead(manual_west);
 
     if (manual_turn_east || manual_turn_west) listening = 0;
-
+/*
     current_millis = millis();
     if ((current_millis - previous_millis_pa) >= azimuth_update_period) 
     {
@@ -63,7 +61,7 @@ void loop(){
             dome.PrintAzimuth();
         }
     } 
- 
+ */
     if (listening) {
         while (Serial.available()) message.process(Serial.read());
     }
@@ -81,6 +79,7 @@ void loop(){
         if(!manual_turn_east & !manual_turn_west) {
             listening = 1;
             dome.AbortSlew();
+            dome.PrintAzimuth();
         };
     }
 
