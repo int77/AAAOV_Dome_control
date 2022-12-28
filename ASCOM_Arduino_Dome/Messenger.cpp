@@ -8,9 +8,6 @@ extern "C" {
 #include "Arduino.h"
 #include "Messenger.h"
 
-
-
-
 Messenger::Messenger()
 {
 	init(' ');
@@ -124,7 +121,6 @@ uint8_t Messenger::available() {
   return next();
   
 }
-
 
 uint8_t Messenger::process(int serialByte) {
      messageState = 0;

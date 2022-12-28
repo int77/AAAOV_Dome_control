@@ -37,6 +37,7 @@ class Dome
     void SetParkAzimuth(long azimuth);
     void Calibrate();
     void SaveConfig();
+    void RestoreDefault();
     void ReadConfig();
     void PrintAzimuth();
     long GetAzimuth();

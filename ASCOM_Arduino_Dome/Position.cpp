@@ -50,21 +50,21 @@ long Position::PosToDegrees(long pos)
 
 long Position::DegreesToPos(int degrees)
 {
-  return map(degrees, 0, 360, 0, this->range);
+  return map(degrees, 0, 360, 0, this->range)+1;
 }
 
 Position Position::operator++(int)
 {
-  if((this->stepperPosition + 1) > this->range)
-  {
-    this->stepperPosition += 1 - this->range;
-  }
-  else
-  {
-    this->stepperPosition += 1;
-  }
+    if ((this->stepperPosition + 1) > this->range)
+    {
+        this->stepperPosition += 1 - this->range;
+    }
+    else
+    {
+        this->stepperPosition += 1;
+    }
   
-  return *this;
+    return *this;
 }
 
 Position Position::operator--(int)
