@@ -7,12 +7,12 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 //
 // TODO - Add your authorship information here
-[assembly: AssemblyTitle("Arduino Dome Driver")]
-[assembly: AssemblyDescription("ASCOM Dome Driver for Arduino")]
+[assembly: AssemblyTitle("ASCOM.AAAOV.Dome")]
+[assembly: AssemblyDescription("ASCOM Dome driver for AAAOV")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("ASCOM Initiative")]
-[assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyCompany("The ASCOM Initiative")]
+[assembly: AssemblyProduct("ASCOM Dome driver for AAAOV")]
+[assembly: AssemblyCopyright("Copyright © 2020 The ASCOM Initiative")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -22,7 +22,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(true)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("32b519d5-cf91-49b4-9830-c9ad42cabaef")]
+[assembly: Guid("3bd300fe-23ee-4e23-9e0c-3a9cb50c5d38")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -35,5 +35,5 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 //
 // TODO - Set your driver's version here
-[assembly: AssemblyVersion("1.3.0.0")]
-[assembly: AssemblyFileVersion("1.3.0.0")]
+[assembly: AssemblyVersion("6.5.0.0")]
+[assembly: AssemblyFileVersion("6.5.1.0")]

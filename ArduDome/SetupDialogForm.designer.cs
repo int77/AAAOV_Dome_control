@@ -1,4 +1,4 @@
-namespace ASCOM.Arduino
+namespace ASCOM.AAAOV
 {
     partial class SetupDialogForm
     {
@@ -32,19 +32,21 @@ namespace ASCOM.Arduino
             this.cmdCancel = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.picASCOM = new System.Windows.Forms.PictureBox();
-            this.comboBoxComPort = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.chkTrace = new System.Windows.Forms.CheckBox();
+            this.comboBoxComPort = new System.Windows.Forms.ComboBox();
             this.txtHomeAzimuth = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.txtParkAzimuth = new System.Windows.Forms.TextBox();
-            this.ckbTraceEnable = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picASCOM)).BeginInit();
             this.SuspendLayout();
             // 
             // cmdOK
             // 
+            this.cmdOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cmdOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.cmdOK.Location = new System.Drawing.Point(243, 204);
+            this.cmdOK.Location = new System.Drawing.Point(279, 181);
             this.cmdOK.Name = "cmdOK";
             this.cmdOK.Size = new System.Drawing.Size(59, 24);
             this.cmdOK.TabIndex = 0;
@@ -54,8 +56,9 @@ namespace ASCOM.Arduino
             // 
             // cmdCancel
             // 
+            this.cmdCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cmdCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cmdCancel.Location = new System.Drawing.Point(243, 264);
+            this.cmdCancel.Location = new System.Drawing.Point(279, 211);
             this.cmdCancel.Name = "cmdCancel";
             this.cmdCancel.Size = new System.Drawing.Size(59, 25);
             this.cmdCancel.TabIndex = 1;
@@ -65,18 +68,18 @@ namespace ASCOM.Arduino
             // 
             // label1
             // 
-            this.label1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.label1.Location = new System.Drawing.Point(12, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(178, 65);
+            this.label1.Size = new System.Drawing.Size(123, 31);
             this.label1.TabIndex = 2;
-            this.label1.Text = "Select COM port";
+            this.label1.Text = "AAAOV dome properties";
             // 
             // picASCOM
             // 
+            this.picASCOM.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.picASCOM.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.picASCOM.Image = global::Arduino.Properties.Resources.ASCOM;
-            this.picASCOM.Location = new System.Drawing.Point(254, 9);
+            this.picASCOM.Image = global::ASCOM.AAAOV.Properties.Resources.ASCOM;
+            this.picASCOM.Location = new System.Drawing.Point(290, 9);
             this.picASCOM.Name = "picASCOM";
             this.picASCOM.Size = new System.Drawing.Size(48, 56);
             this.picASCOM.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -85,79 +88,88 @@ namespace ASCOM.Arduino
             this.picASCOM.Click += new System.EventHandler(this.BrowseToAscom);
             this.picASCOM.DoubleClick += new System.EventHandler(this.BrowseToAscom);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(13, 47);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(58, 13);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Comm Port";
+            // 
+            // chkTrace
+            // 
+            this.chkTrace.AutoSize = true;
+            this.chkTrace.Location = new System.Drawing.Point(77, 71);
+            this.chkTrace.Name = "chkTrace";
+            this.chkTrace.Size = new System.Drawing.Size(69, 17);
+            this.chkTrace.TabIndex = 6;
+            this.chkTrace.Text = "Trace on";
+            this.chkTrace.UseVisualStyleBackColor = true;
+            // 
             // comboBoxComPort
             // 
             this.comboBoxComPort.FormattingEnabled = true;
-            this.comboBoxComPort.Location = new System.Drawing.Point(34, 32);
+            this.comboBoxComPort.Location = new System.Drawing.Point(77, 44);
             this.comboBoxComPort.Name = "comboBoxComPort";
-            this.comboBoxComPort.Size = new System.Drawing.Size(121, 21);
-            this.comboBoxComPort.TabIndex = 4;
-            // 
-            // label2
-            // 
-            this.label2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label2.Location = new System.Drawing.Point(12, 91);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(178, 65);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Home Azimuth [°]";
+            this.comboBoxComPort.Size = new System.Drawing.Size(115, 21);
+            this.comboBoxComPort.TabIndex = 7;
             // 
             // txtHomeAzimuth
             // 
-            this.txtHomeAzimuth.Location = new System.Drawing.Point(34, 120);
+            this.txtHomeAzimuth.Location = new System.Drawing.Point(44, 132);
             this.txtHomeAzimuth.Name = "txtHomeAzimuth";
             this.txtHomeAzimuth.Size = new System.Drawing.Size(121, 20);
-            this.txtHomeAzimuth.TabIndex = 6;
+            this.txtHomeAzimuth.TabIndex = 9;
             // 
             // label3
             // 
             this.label3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label3.Location = new System.Drawing.Point(12, 174);
+            this.label3.Location = new System.Drawing.Point(14, 103);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(178, 65);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "Park Azimuth [°]";
+            this.label3.TabIndex = 8;
+            this.label3.Text = "Home Azimuth [°]";
             // 
             // txtParkAzimuth
             // 
-            this.txtParkAzimuth.Location = new System.Drawing.Point(34, 204);
+            this.txtParkAzimuth.Location = new System.Drawing.Point(44, 211);
             this.txtParkAzimuth.Name = "txtParkAzimuth";
             this.txtParkAzimuth.Size = new System.Drawing.Size(121, 20);
-            this.txtParkAzimuth.TabIndex = 8;
+            this.txtParkAzimuth.TabIndex = 11;
             // 
-            // ckbTraceEnable
+            // label4
             // 
-            this.ckbTraceEnable.AutoSize = true;
-            this.ckbTraceEnable.Location = new System.Drawing.Point(34, 264);
-            this.ckbTraceEnable.Name = "ckbTraceEnable";
-            this.ckbTraceEnable.Size = new System.Drawing.Size(111, 17);
-            this.ckbTraceEnable.TabIndex = 10;
-            this.ckbTraceEnable.Text = "Enable Trace Log";
-            this.ckbTraceEnable.UseVisualStyleBackColor = true;
+            this.label4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label4.Location = new System.Drawing.Point(14, 181);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(178, 65);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "Park Azimuth [°]";
             // 
             // SetupDialogForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(322, 305);
-            this.Controls.Add(this.ckbTraceEnable);
+            this.ClientSize = new System.Drawing.Size(348, 267);
             this.Controls.Add(this.txtParkAzimuth);
-            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.txtHomeAzimuth);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.comboBoxComPort);
+            this.Controls.Add(this.chkTrace);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.picASCOM);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.cmdCancel);
             this.Controls.Add(this.cmdOK);
-            this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SetupDialogForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Dome Arduino setup";
-            this.Load += new System.EventHandler(this.SetupDialogForm_Load);
+            this.Text = "AAAOV Setup";
             ((System.ComponentModel.ISupportInitialize)(this.picASCOM)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -166,17 +178,16 @@ namespace ASCOM.Arduino
 
         #endregion
 
-        private System.Windows.Forms.PictureBox picASCOM;
-        private System.Windows.Forms.ComboBox comboBoxComPort;
-
-        private Config Config;
         private System.Windows.Forms.Button cmdOK;
         private System.Windows.Forms.Button cmdCancel;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.PictureBox picASCOM;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox chkTrace;
+        private System.Windows.Forms.ComboBox comboBoxComPort;
         private System.Windows.Forms.TextBox txtHomeAzimuth;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtParkAzimuth;
-        private System.Windows.Forms.CheckBox ckbTraceEnable;
+        private System.Windows.Forms.Label label4;
     }
 }

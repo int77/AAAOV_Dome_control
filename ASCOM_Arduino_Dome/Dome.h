@@ -1,20 +1,23 @@
 #ifndef Dome_h
 #define Dome_h
 
-#define encoderA 2
-#define encoderB 3
-#define GO_LEFT 4
-#define GO_RIGHT 5
-#define homeSensor 6
-
-#define FULLROTATION 1000
-
 #include <inttypes.h>
 #include <avr/io.h>
 #include <EEPROM.h>
 
 #include "Messenger.h"
 #include "Position.h"
+
+#define encoderA 2
+#define encoderB 3
+#define GO_LEFT 4
+#define GO_RIGHT 5
+#define homeSensor 6
+#define manual_west 8
+#define manual_east 7
+#define FULLROTATION 1000
+
+#define abs_macro(x) ((x)>0?(x):-(x))
 
 class Dome
 {
@@ -24,23 +27,27 @@ class Dome
     void Park();
     void OpenCloseShutter(int open);
     void Slew(long val);
+    void GetStatus();
+    void Go_West();
+    void Go_East();
     void AbortSlew();
     void SyncToAzimuth(long azimuth);
     void FindHome();
     void SetHomeAzimuth(long azimuth);
     void SetParkAzimuth(long azimuth);
     void Calibrate();
-    void Calibrate1();
     void SaveConfig();
+    void RestoreDefault();
     void ReadConfig();
+    void PrintAzimuth();
+    long GetAzimuth();
+    
   private:
     void step(long val);
-    long GetAzimuth();
-    long GetPosition(long azimuth);
-    void PrintAzimuth();
+    //long GetPosition(long azimuth);
+    void PrintStepperPosition();
 };
 
-extern void update_position1();
-extern void update_position2();
+extern void update_position();
 
 #endif

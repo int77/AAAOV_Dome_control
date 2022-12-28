@@ -18,7 +18,6 @@
 // 
 // --------------------------------------------------------------------------------
 //
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -33,7 +32,6 @@ using ASCOM;
 using ASCOM.Utilities;
 using ASCOM.Interface;
 using System.Globalization;
-
 
 namespace ASCOM.Arduino
 {

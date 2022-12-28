@@ -1,6 +1,5 @@
 
 
-//ADDED FOR COMPATIBILITY WITH WIRING
 extern "C" {
   #include <stdlib.h>
 }
@@ -8,9 +7,12 @@ extern "C" {
 #include "Arduino.h"
 #include "Dome.h"
 
-//long parkAzimuth = 170;
-//long homeAzimuth = 90;
-//long stepsPerRotation = FULLROTATION;
+int eeAddress = 0;
+long parkAzimuth = 130;
+long homeAzimuth = 143;
+long stepsPerRotation = 135575;
+
+volatile Position position(FULLROTATION);
 
 struct config_t {
 	long parkAzimuth;
@@ -22,22 +24,18 @@ struct config_t {
 unsigned long pulseCount[2];
 unsigned long t[2];
 volatile long temp, move;
-static boolean rotating = false;
-boolean A_set = false;
-boolean B_set = false;
-
-Position position(FULLROTATION);
+volatile uint8_t state_enc;
 
 //
 // Constructor
 // ..//
 Dome::Dome(void)
 {
-	EEPROM.get(0, config);
+	EEPROM.get(eeAddress, config);
 
 	position = config.lastPosition;
 	position.range = config.stepsPerRotation;
-	
+
 }
 
 //
@@ -76,47 +74,63 @@ void Dome::interpretCommand(Messenger *message)
 	case 'C':
 		Calibrate();
 		break;
-	case 'D':
-		Calibrate1();
-		break;
 	case 'W':
 		SaveConfig();
 		break;
 	case 'R':
 		ReadConfig();
 		break;
-
+	case 'G':
+		GetStatus();
+		break;
+	case 'D':
+		RestoreDefault();
+		break;
   }
+}
+
+void Dome::GetStatus()
+{
+	Serial.println("CONNECTED");
+	PrintAzimuth();
+}
+
+void Dome::Go_East() 
+{
+	digitalWrite(GO_RIGHT, HIGH);
+	digitalWrite(GO_LEFT, LOW);
+}
+
+void Dome::Go_West()
+{
+	digitalWrite(GO_RIGHT, LOW);
+	digitalWrite(GO_LEFT, HIGH);
 }
 
 void Dome::step(long val)
 {
-  move = abs(val);
-    
+	noInterrupts();
+	move = abs_macro(val);
+	interrupts();
+  
   if (val > 0) {
-	  digitalWrite(GO_RIGHT, LOW);
-	  digitalWrite(GO_LEFT, HIGH);
+	  Go_West();
   }
   else {
-	  digitalWrite(GO_RIGHT, HIGH);
-	  digitalWrite(GO_LEFT, LOW);
+	  Go_East();
   }
   
   while(move > 0)
   {
-	rotating = true;
-
-	if(Serial.available() > 0) break;
-	//if (move != temp) {
-	//	Serial.println(move);
-	//	temp = move;
-	//}
-	//Serial.print(move);
-	//PrintAzimuth();
+	  if (Serial.available() > 0) {
+//		  char c = Serial.read();
+//		  if (c == 'H') {
+			  break;
+//		  }
+	  }
   }
  
   AbortSlew();
- 
 }
 
 void Dome::AbortSlew()
@@ -125,36 +139,41 @@ void Dome::AbortSlew()
 	digitalWrite(GO_RIGHT, HIGH);
 	config.lastPosition = position.stepperPosition;
 	config.stepsPerRotation = position.range;
-	EEPROM.put(0, config);
+	EEPROM.put(eeAddress, config);
 }
 
 void Dome::Slew(long azimuth)
 {
-  step(position.Quickest(azimuth));
-  PrintAzimuth();
-  if (position.Degrees()==config.homeAzimuth) Serial.println("ATHOME");
+	Serial.println("SLEWING");
+	long target_move = position.Quickest(azimuth);
+	if (target_move > 0) target_move = position.Quickest(azimuth + 1);
+	step(target_move);
+	Serial.println("STOP");
+	PrintAzimuth();
+	if ((position.Degrees() >= config.homeAzimuth - 2) && (position.Degrees() <= config.homeAzimuth + 2)) Serial.println("ATHOME");
 }
 
 void Dome::FindHome()
 {
-	//step(position.Quickest(azimuth));
-	move = 1.5*config.stepsPerRotation;
+	Serial.println("SLEWING");
+	noInterrupts();
+	move = 2*config.stepsPerRotation;
+	interrupts();
 
-	digitalWrite(GO_LEFT, HIGH);
-	digitalWrite(GO_RIGHT, LOW);
+	Go_West();
 
+	bool aborted = false;
 	while(move > 0)
 	{
-		rotating = true;
-
-		if (Serial.available() > 0) break;
-		if (move != temp) {
-			//Serial.println(move);
-			// PrintAzimuth();
-			temp = move;
+		if (Serial.available() > 0) {
+//			char c = Serial.read();
+//			if (c == 'H') 
+//			{
+				aborted = true;
+				break;
+//			}
 		}
-
-
+		
 		if (digitalRead(homeSensor) == LOW) {
 			delay(50);
 			if (digitalRead(homeSensor) == LOW) {
@@ -163,32 +182,45 @@ void Dome::FindHome()
 		}
 
 	}
-	AbortSlew();
-	if (move>0) {
+	digitalWrite(GO_LEFT, HIGH);
+	digitalWrite(GO_RIGHT, HIGH);
+	//Serial.println("STOP");
+
+	if ((move>0) && !aborted) {
 		position.Sync(config.homeAzimuth);
-		PrintAzimuth();
-		Serial.println("SYNCED");
-		Serial.println("ATHOME");
+		delay(5000);
+		Slew(config.homeAzimuth);
 	}
 	else {
 		Serial.println("HOME not found");
+		Serial.println("NOTSYNCED");
+		PrintAzimuth();
 	}
 
 }
 
 void Dome::Calibrate()
 {
-	move = 256000;
+	Serial.println("SLEWING");
+	noInterrupts();
+	move = 4194304;
+	interrupts();
 	int i = 0;
 
-	digitalWrite(GO_LEFT, HIGH);
-	digitalWrite(GO_RIGHT, LOW);
-
+	Go_West();
+	bool aborted = false;
 	while (move > 0)
 	{
-		rotating = true;
 
-		if (Serial.available() > 0) break;
+		if (Serial.available() > 0) {
+//			char c = Serial.read();
+//			if (c == 'H')
+//			{
+				aborted = true;
+				break;
+//			}
+		}
+
 		if (digitalRead(homeSensor) == LOW) {
 			delay(50);
 			if (digitalRead(homeSensor) == LOW) {
@@ -196,89 +228,26 @@ void Dome::Calibrate()
 				t[i] = millis();
 				Serial.print("At HOME position:");
 				Serial.println(pulseCount[i]);
-				delay(1000);
+				delay(1500);
 				i++;
 			}
 			
 		}
 		if (i > 1) break;
-
-		//Serial.print(move);
-		//PrintAzimuth();
 	}
 	position.range = pulseCount[0] - pulseCount[1];
 	AbortSlew();
-	if (i > 1) {
+	Serial.println("STOP");
+
+	if ((i > 1) && !aborted) {
 		Serial.print("Number of pulses per Dome rotation: ");
 		Serial.println(config.stepsPerRotation);
 		Serial.print("Dome rotation period in seconds: ");
 		Serial.println((t[1]-t[0])/1000);
-	}
-}
-
-
-void Dome::Calibrate1()
-{
-	move = 256000;
-	int i = 0;
-
-	unsigned long lastDebounceTime = 0;
-	unsigned long debounceDelay = 0;
-	unsigned long P_count = 0;
-	boolean lastState = LOW;
-	boolean State;
-	static boolean reading;
-
-	digitalWrite(GO_LEFT, HIGH);
-	digitalWrite(GO_RIGHT, LOW);
-
-	while (move > 0)
-	{
-		rotating = false;
-
-		reading = digitalRead(encoderA);
-
-		if (reading != lastState) lastDebounceTime = millis();
-
-		if ((millis() - lastDebounceTime) > debounceDelay) {
-			//Serial.println(reading);
-
-			if (reading != State) {
-				State = reading;
-				
-				if (State != lastState) {
-					P_count++;
-					lastState = State;
-					//Serial.println(P_count);
-				}
-			}
-
-		}
-
-		if (Serial.available() > 0) break;
-
-		if (digitalRead(homeSensor) == LOW) {
-			delay(50);
-			if (digitalRead(homeSensor) == LOW) {
-				pulseCount[i] = P_count;
-				t[i] = millis();
-				Serial.print("At HOME position:");
-				Serial.println(pulseCount[i]);
-				delay(1000);
-				i++;
-			}
-
-		}
-		if (i > 1) break;
-	}
-	//position.range = pulseCount[0] - pulseCount[1];
-	AbortSlew();
-	if (i > 1) {
-		Serial.print("Number of pulses per Dome rotation: ");
-		Serial.println(pulseCount[1] - pulseCount[0]);
-		Serial.println(config.stepsPerRotation);
-		Serial.print("Dome rotation period in seconds: ");
-		Serial.println((t[1] - t[0]) / 1000);
+		
+		position.Sync(config.homeAzimuth);
+		delay(5000);
+		Slew(config.homeAzimuth);
 	}
 }
 
@@ -289,91 +258,142 @@ void Dome::PrintAzimuth()
 
 }
 
+long Dome::GetAzimuth()
+{
+	return position.Degrees();
+}
+
+void Dome::PrintStepperPosition()
+{
+	Serial.print("S ");
+	Serial.println(position.stepperPosition);
+}
+
 void Dome::Park()
 {
-  Slew(config.parkAzimuth);
-  Serial.println("PARKED");
+	Serial.println("SLEWING");
+	step(position.Quickest(config.parkAzimuth));
+	delay(5000);
+	Serial.println("SLEWING");
+	step(position.Quickest(config.parkAzimuth));
+	PrintAzimuth();
+	Serial.println("STOP");
+	if ((position.Degrees() >= config.parkAzimuth-2)&&(position.Degrees() <= config.parkAzimuth + 2)) Serial.println("PARKED");
 }
 
 void Dome::SetHomeAzimuth (long azimuth)
 {
 	config.homeAzimuth = azimuth;
-	//PrintAzimuth();
 	Serial.println("Home azimuth changed");
-	EEPROM.put(0, config);
+	EEPROM.put(eeAddress, config);
 }
 
 void Dome::SetParkAzimuth(long azimuth)
 {
 	config.parkAzimuth = azimuth;
-	//PrintAzimuth();
 	Serial.println("Park azimuth changed");
-	EEPROM.put(0, config);
+	EEPROM.put(eeAddress, config);
 }
 
 void Dome::OpenCloseShutter(int open)
 {
-  switch(open)
-  {
-    case 1:
-      Serial.println("SHUTTER OPEN");
-	  digitalWrite(LED_BUILTIN, HIGH);
-      break;
-    case 0:
-      Serial.println("SHUTTER CLOSED");
-	  digitalWrite(LED_BUILTIN, LOW);
-      break;
-  }
+	switch (open)
+	{
+	case 1:
+		Serial.println("SHUTTER OPENING");
+		break;
+	case 0:
+		Serial.println("SHUTTER CLOSING");
+		break;
+	}
+
+	delay(3000);
+
+	switch(open)
+	{
+	case 1:
+		Serial.println("SHUTTER OPEN");
+		digitalWrite(LED_BUILTIN, HIGH);
+		break;
+	case 0:
+		Serial.println("SHUTTER CLOSED");
+		digitalWrite(LED_BUILTIN, LOW);
+		break;
+	}
 }
 
 void Dome::SyncToAzimuth(long azimuth)
 {
   position.Sync(azimuth);
-  PrintAzimuth();
-  delay(500);
   Serial.println("SYNCED");
+  PrintAzimuth();
 }
 
 void Dome::ReadConfig()
 {
-	EEPROM.get(0, config);
-	
+	EEPROM.get(eeAddress, config);
 	Serial.print("home azimuth: ");	Serial.println(config.homeAzimuth);
 	Serial.print("park azimuth: ");	Serial.println(config.parkAzimuth);
 	Serial.print("steps per rotation: ");	Serial.println(config.stepsPerRotation);
 	Serial.print("last position: ");	Serial.println(config.lastPosition);
-	PrintAzimuth();
-
 }
 
 void Dome::SaveConfig()
 {
-	//config.homeAzimuth = homeAzimuth;
-	//config.parkAzimuth = parkAzimuth;
-	//config.lastPosition = 0;
-	//config.stepsPerRotation = stepsPerRotation;
-
-	EEPROM.put(0, config);
+	EEPROM.put(eeAddress, config);
 }
 
+void Dome::RestoreDefault()
+{
+	config.homeAzimuth = homeAzimuth;
+	config.parkAzimuth = parkAzimuth;
+	config.lastPosition = homeAzimuth;
+	config.stepsPerRotation = stepsPerRotation;
 
-void update_position1() {
-	if (rotating) delay(2);
-		if (digitalRead(encoderA) != A_set) A_set = !A_set;
-	if (A_set && !B_set) {
-		position++;
-		move--;
-	}
-	rotating = false;
+	EEPROM.put(eeAddress, config);
+	
+	position.Sync(config.homeAzimuth);
+	Serial.print("home azimuth: ");	Serial.println(config.homeAzimuth);
+	Serial.print("park azimuth: ");	Serial.println(config.parkAzimuth);
+	Serial.print("steps per rotation: ");	Serial.println(config.stepsPerRotation);
+	Serial.print("last position: ");	Serial.println(config.lastPosition);
 }
 
-void update_position2() {
-	if (rotating) delay(2);
-	if (digitalRead(encoderB) != B_set) B_set = !B_set;
-	if (B_set && !A_set) {
+void update_position() {
+
+	//For old Arduino Nano 
+	//uint8_t p1val = PIND & B00000100;
+	//uint8_t p2val = PIND & B00001000;
+
+	//For Arduino Nano Every
+	uint8_t p1val = VPORTA.IN & B00000001;
+	uint8_t p2val = VPORTF.IN & B00100000;
+
+	uint8_t state = state_enc & B00000011;
+	
+	if (p1val) state |= B00000100;
+	if (p2val) state |= B00001000;
+
+	state_enc = (state >> 2);
+	switch (state) {
+	case 1: case 7: case 8: case 14:
 		position--;
 		move--;
+		return;
+	case 2: case 4: case 11: case 13:
+		position++;
+		move--;
+		return;
+// if more than two steps allowed
+/*	case 3: case 12:
+		position++;
+		position++;
+		move -= 2;
+		return;
+	case 6: case 9:
+		position++;
+		position++;
+		move -= 2;
+		return;*/
 	}
-	rotating = false;
 }
-
